@@ -96,6 +96,9 @@ Pick any path from $s$ to $t$ and assign the maximum load possible. Repeat until
 \end{algo}
 
 This won't work as an arbitrary assignment is inefficient. There might be multiple ways of going from node $u$ to $t$ but an arbitrary choice might "fill" a unique path from $v$ to $t$.
+\\
+Now there's the Ford-Flukerson algorithm which is the greedy algorithm that works. It works because if you can ``fill up'' a node.
+The idea is that you select a path, add as much as you can and then add reverse edges for each edge in that path. 
 
 \end{document}
 
