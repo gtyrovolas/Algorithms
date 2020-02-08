@@ -1,0 +1,101 @@
+%!TEX output_directory = .aux
+%!TEX copy_output_on_build(true)
+
+\documentclass[11pt,a4paper, titlepage]{article}
+\usepackage[a4paper, total={6.5in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amsthm}
+
+\title{A Study of the Function and Structure of Algorithms and Data Structures}
+\author{Giannis Tyrovolas}
+\date{February 8, 2020}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{prop}[theorem]{Proposition}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{algo}[theorem]{Algorithm}
+
+\begin{document}
+
+\maketitle
+
+\section{Lecture 5: Network Flow I}
+
+Imagine flow networks as a set of pipes with water going through them. Since there's a direction to the water the graph is obviously a directed graph. Each edge is basically a tube. Each tube has a certain \emph{integer} capacity and we think of start and finishing points. There's a lot of problems you can think of but an obvious question is what's the maximum amount of water you can send from the \emph{source} to the \emph{sink}. 
+\\
+Although not necessary, for our sake we'll consider flows with the following properties:
+\begin{itemize}
+	\item no anti-parallel edges
+	\item no edge enters $s$
+	\item no edge leaves $t$
+\end{itemize}
+
+Now to write all this in a fancy way:
+
+\begin{definition}[Flow Networks]
+A \emph{flow network} is a tuple $(G, s, t, c)$ where $G = (V,E)$ is a directed graph, $s, t \in V$ and $c\colon E \longrightarrow \mathbb{N}$.
+\\
+The other conditions can be stated as:
+\begin{itemize}
+	\item $(u,v) \in E \implies (v,u) \notin E$
+	\item $\nexists u$ such that $(u,s) \in E$
+	\item $\nexists v$ such that $(t,v) \in E$
+\end{itemize}
+\end{definition}
+
+We also need to define a particular flow:
+
+\begin{definition}[Flow]
+A \emph{flow} is an assignment of load to each edge of the form $f\colon E \longrightarrow \mathbb{R}_{\geq0}$ That respects the capacity of each edge, i.e.
+\[
+	\forall e \in E \ 0 \leqslant f(e) \leqslant c(e)
+\]
+Also much load enters a node leaves the node. That is except for $s$ and $t$ So:
+\[
+	\forall v \in V \sum_{e \text{ into } v} f(e) = \sum_{e \text{ leaving } v} {f(e)}
+\]
+\emph{Value} of $f$, denoted $\abs{f}$ is the sum of the load of the edges leaving $s$.
+\end{definition}
+
+Now, lets think of how we can maximise $\abs{f}$. Before finding a solution lets think of an upper bound. 
+\\
+\\
+Say we partition $V$ in $A$ and $B$ with $s \in A$ and $t \in B$. Then the maximum flow from $s$ to $t$ cannot exceed the total amount of flow leaving $A$. If we call this partition an $s$-$t$ cut and $cap(A,B) \coloneqq \displaystyle \sum_{e \text{ leaves } A} c(e)$. We derive the following:
+
+\begin{lemma}
+For any $s$-$t$ cut: $\abs{f} \leqslant cap(A,B)$. 
+\end{lemma}
+
+Hence, finding the minimum cut gives a potentially good bound on the maximum flow. But this has an easy corollary.
+
+\begin{corollary}
+For a partition $(A,B)$ and a flow $f$: 
+\[
+\abs{f} = cap(A,B) \implies f \text{ is a maximum flow and } (A,B) \text{ is a minimum cut.}	
+\]
+\end{corollary}
+\begin{proof}
+For a set $S$ and a set of upper bounds $B$ if $s\in S, \ b \in B$ and $s = b$ then $s$ is maximum and $b$ is minimum. 
+\end{proof}
+
+Now for an actual solution. The first thing all computer scientists should try is a greedy algorithm. Of course this fails in this case.
+
+\begin{algo}[Greedy max-flow]
+Pick any path from $s$ to $t$ and assign the maximum load possible. Repeat until no improvement can be made.
+\end{algo}
+
+This won't work as an arbitrary assignment is inefficient. There might be multiple ways of going from node $u$ to $t$ but an arbitrary choice might "fill" a unique path from $v$ to $t$.
+
+\end{document}
+
